@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <style>
+
+body {
+    background-color: #05070a;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    font-family: 'Courier New', Courier, monospace; 
+}
+
+form {
+    background: #0d1117;
+    padding: 50px;
+    border: 3px solid #00d4ff;
+    border-radius: 15px;
+    width: 700px;
+    height: 710px;
+    box-shadow: 0 0 20px rgba(0, 212, 255, 0.2);
+    margin-top: 156px;
+    margin-left: -60px;
+}
+
+form input, form input[type=sumbit] {
+    display: block;
+    width: 45%; 
+    padding: 15px;
+    margin: 0 auto 20px auto;
+    background: #161b22;
+    border: 1px solid #30363d;
+    color: white;
+    margin-left: -2px;
+    border-radius: 8px;
+}
+
+form input[type=sumbit]  {
+    background: #00d4ff;
+    color: #05070a;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+h2 {
+    color: #00d4ff;
+    text-align: center;
+    margin-top: -25px;
+    letter-spacing: 2px;
+}
+
+form input {
+    padding-top: 20px;
+    width: 40%;
+    background: #161b22;
+    border: 1px solid #609ce0;
+    color: rgb(247, 234, 234);
+    border-radius: 8px;
+    font-size: 16px;
+    transition: 0.4s;
+}
+
+form input[type=submit] {
+    margin-left: 200px;
+    margin-top: -15px;
+}
+
+
+input:not([type="radio"]):hover {
+    border-color: #167385;
+    box-shadow: 0 2px 10px rgba(0, 212, 255, 0.3);
+}
+
+input::placeholder {
+    color: #a0a0a0;
+    font-style: italic;
+}
+
+input:hover::placeholder {
+    transition: 0.5s;
+    color: #126bc4;
+}
+
+input:not([type="radio"]):active {
+    border-color: #00d4ff;
+    box-shadow: 0 0 15px #00d4ff;
+}
+
+input[type=submit]:hover {
+    background: #008fae;
+    box-shadow: 0 0 15px #00d4ff;
+    transform: scale(1.02);
+}
+
+input, textarea {
+    padding: 15px;
+    background: #161b22;
+    border: 1px solid #609ce0;
+    color: rgb(247, 234, 234);
+    border-radius: 8px;
+    font-size: 16px;
+    transition: 0.4s;
+    font-family: 'Courier New', Courier, monospace; 
+    resize: none; 
+}
+
+textarea {
+    min-height: 100px;
+    margin-bottom: 20px;
+
+    &:hover {
+        border-color: #167385;
+        box-shadow: 0 2px 10px rgba(0, 212, 255, 0.3);
+    }
+}
+
+#h3-text {
+    color: #00d4ff;
+    margin-bottom: 15px;
+    letter-spacing: 2px;
+}
+
+input:not([type="radio"]):focus, textarea:focus {
+    border-color: #00d4ff;
+    box-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+}
+
+form input.age {
+    display: block;
+    margin-left: 390px;
+    margin-top: -149px ;
+}
+
+form input.email {
+    display: block;
+    margin-top: -396px;
+}
+
+aside .info-box {
+    position: absolute;
+    right: 20px;
+    top: 150px;
+    width: 300px;
+    background: #0d1117;
+    border: 1px solid #00d4ff;
+    padding: 20px;
+    border-radius: 10px;
+    color: #a0a0a0;
+}
+
+.custom-select-wrapper {
+    position: relative;
+    width: 43%;
+    margin-bottom: 20px;
+    margin-left: 390px;
+    font-family: 'Courier New', monospace;
+}
+
+.select-trigger {
+    background: #161b22;
+    border: 1px solid #609ce0;
+    color: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: 0.3s;
+}
+
+.select-trigger:hover { 
+    border-color: #00d4ff; 
+    box-shadow: 0 0 10px rgba(0, 212, 255, 0.3); 
+}
+
+.options-container {
+    display: none;
+    position: absolute;
+    top: 110%; 
+    left: 0; 
+    right: 0;
+    background: #0d1117;
+    border: 1px solid #00d4ff;
+    border-radius: 8px;
+    max-height: 250px;  
+    overflow-y: auto;
+    z-index: 1000;
+}
+
+.option {
+    padding: 12px;
+    color: #a0a0a0;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.arrow {
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 6px solid #fff;
+    transition: 0.4s ease;
+}
+
+.custom-select-wrapper.active .arrow {
+    transform: rotate(180deg);
+    border-top-color: #00d4ff; 
+}
+
+.options-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.options-container::-webkit-scrollbar-thumb {
+    background: #00f0ff;
+    border-radius: 3px;
+}
+
+.option:hover { 
+    background: #167385; 
+    color: #fff; 
+    padding-left: 20px; 
+}
+
+.skills-box {
+    width: 300px;
+    height: 360px;
+    background-color: #161b22;
+    border: 1px solid #00d4ff;
+    border-radius: 8px;
+    padding: 20px;
+    margin-left: 390px;
+    margin-top: 20px;
+    transition: 0.4s;
+}
+
+.skill-row {
+    display: flex !important; 
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 15px 5px 0;
+    cursor: pointer;
+    position: relative;
+    z-index: 10; 
+    color: #00d4ff;
+    text-shadow: 2px 3px 10px #00d4ff;
+    letter-spacing: 2px;
+    padding-top: 12px;
+}
+
+.skill-row input {
+    cursor: pointer;
+    margin: 0;
+    position: relative;
+    z-index: 11;
+}
+
+.skill-row:hover {
+    background-color: rgba(0, 212, 255, 0.15); 
+    width: 315px;
+    margin-left: -10px;
+    color: #fff; 
+    text-shadow: 0 0 10px #00d4ff; 
+}
+
+
+/* info bar */
+.progress-wrapper { 
+    margin-bottom: 30px; 
+    width: 100%; 
+    display: block;
+
+}
+
+.progress-text {
+    color: #fff; 
+    font-size: 12px; 
+    margin-bottom: 5px; 
+}
+
+.main-progress-bg {
+    height: 4px;
+    background: #161b22;
+    border-radius: 2px;
+    width: 100%;
+}
+
+.main-progress-fill {
+    height: 100%;
+    width: 0%; 
+    background: #00d4ff;
+    box-shadow: 0 0 10px #00d4ff;
+    transition: 0.4s ease;
+    border-radius: 2px;
+}
+
+/* errors */
+.password-group {
+    position: relative;
+    margin-bottom: 25px; 
+}
+
+.error-msg1 {
+    font-size: 11px;
+    color: #ff4d4d; 
+    text-shadow: 0 2px 5px rgba(255, 77, 77, 0.5);
+    margin-top: 5px;
+    height: 15px; 
+    font-family: 'Courier New', monospace;
+    opacity: 0;
+    transition: opacity 0.5s;
+}
+
+.error-msg1.visible {
+    opacity: 1;
+    transform: translateY(-4px);
+}
+
+#submit:disabled {
+    opacity: 0.5;             
+    cursor: not-allowed;      
+    background-color: #333;  
+    border: 1px solid #555;   
+    pointer-events: none;     
+}
+
+#submit {
+    transition: 0.3s; 
+}
+
+.error-msg2 {
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    color: #ff4d4d; 
+    margin-top: 5px;
+    height: 15px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    text-shadow: 0 2px 5px rgba(255, 77, 77, 0.5);
+    display: block;
+}
+
+
+.error-msg2.visible {
+    opacity: 1;
+}
+/* ----- */
+
+.fade-in { 
+    animation: fadeIn 0.8s ease-in-out; 
+}
+
+@keyframes fadeIn {
+    from {
+         opacity: 0;
+          transform: translateY(12px);
+    }
+    to {
+         opacity: 1; 
+         transform: translateY(0); 
+    } 
+}
+
+
+    </style>
+</head>
+<body>
+    <div style="display: none;" id="d">
+        {{ error }}
+    </div>
+
+    <form action="/" method="POST" class="fade-in">
+    <h2>Hesabın qeydiyyatı</h2>
+
+    <input type="text" name="name" placeholder="Ad" required oninvalid="this.setCustomValidity('Zəhmət olmasa, bu sahəni boş qoymayın!')" 
+    oninput="this.setCustomValidity('')">
+
+    <input type="text" name="surname" placeholder="Soyad" required oninvalid="this.setCustomValidity('Zəhmət olmasa, bu sahəni boş qoymayın!')" 
+        oninput="this.setCustomValidity('')">
+
+    <input type="number" class="age" name="age" placeholder="Yaş" max="99" min="5" required>
+
+    <div class="custom-select-wrapper">
+        <div class="select-trigger" onclick="toggleDropdown()">
+            <span id="selected-country">Ölkə seçin</span>
+            <div class="arrow"></div>
+        </div>
+        <div class="options-container" id="options"></div>
+
+        <input type="hidden" name="country" id="country-input" value="">
+    </div>
+
+    <div class="skills-box">
+        <p style="color: #fff; font-size: 14px;">İxtisasınız:</p>
+        
+        <label class="skill-row">
+            <span>Design</span>
+            <input type="radio" name="skills" value="design">
+        </label>
+        <label class="skill-row">
+            <span>Hacking</span>
+            <input type="radio" name="skills" value="hacking">
+        </label>
+        <label class="skill-row">
+            <span>Coding</span>
+            <input type="radio" name="skills" value="coding">
+        </label>
+        <label class="skill-row">
+            <span>Management</span>
+            <input type="radio" name="skills" value="management">
+        </label>
+        <label class="skill-row">
+            <span>Testing</span>
+            <input type="radio" name="skills" value="testing">
+        </label>
+        <label class="skill-row">
+            <span>Marketing</span>
+            <input type="radio" name="skills" value="marketing">
+        </label>
+        <label class="skill-row">
+            <span>Analytics</span>
+            <input type="radio" name="skills" value="analytics">
+        </label>
+        <label class="skill-row">
+            <span>DevOps</span>
+            <input type="radio" name="skills" value="devops">
+        </label>
+        <label class="skill-row">
+            <span>Data Science</span>
+            <input type="radio" name="skills" value="data-science">
+        </label>
+    </div>
+
+    <input type="email" class="email" name="email" placeholder="E-mail" required oninvalid="this.setCustomValidity('Zəhmət olmasa, bu sahəni boş qoymayın!')" 
+        oninput="this.setCustomValidity('')">
+
+    <h3 id="h3-text">Məlumat:</h3>
+    <textarea name="info" cols="27" rows="10" placeholder="Məcburi deyil"></textarea>
+    
+    <div class="password-group">
+        <input type="password" name="password" id="password-input" oninput="checkPassword()" placeholder="Şifrə">
+        
+        <div id="password-error" class="error-msg1"></div>
+        
+        <div id="first_and_last-letter" class="error-msg2"></div>
+    </div>
+
+    <div class="progress-wrapper">
+        <div class="progress-text">Dataların doldurulması: <span id="progress-percent">0%</span></div>
+        <div class="main-progress-bg">
+            <div class="main-progress-fill" id="main-progress-fill"></div>
+        </div>
+    </div>
+
+    <input type="hidden" name="reg_time" id="reg-time-field">        
+    <input type="submit" value="Daxil ol" id="submit" disabled>
+</form>
+
+<aside>
+    <div class="info-box">
+        <h3>Təlimat</h3>
+        <ul>
+            <li>Düzgün məlumatları daxil edin.</li>
+            <li>Ad unikal olmalıdır.</li>
+            <li>Şifrənizi etibarlı yerdə saxlayın.</li>
+        </ul>
+        <p>Məlumatlarınız istifadəçi profili üçün istifadə olunur!</p>
+    </div>
+</aside>
+
+
+
+<script>
+        // error
+        let er = document.getElementById('d');
+        
+        let errorMessage = er.textContent.trim();
+    
+        if (errorMessage) {
+            alert(errorMessage);
+        }
+
+
+        // country | custom-select-wrapper
+        const countries = ["Azerbaijan", "Brazil", 
+        "Canada", "Japan", "Norway", "France", 
+        "Germany", "Italy", "Spain", "USA", "China", 
+        "India", "Australia", "Mexico", "Argentina",
+        "Chile", "South Korea", "Turkey", "Egypt", "UAE", 
+        "Thailand", "Vietnam", "Greece", "Portugal", "Netherlands", 
+        "Sweden", "Finland", "Denmark", "Switzerland", "Austria", 
+        "Belgium", "Poland", "Czech Republic", "Hungary", "Ireland", 
+        "New Zealand", "South Africa", "Nigeria", "Kenya", "Başqa"
+        ];
+
+        const optionsContainer = document.getElementById('options');
+        optionsContainer.innerHTML = ''; 
+
+        countries.forEach(country => {
+            const div = document.createElement('div');
+            div.className = 'option';
+            div.textContent = country;
+            div.onclick = function() {
+                document.getElementById('selected-country').textContent = country;
+                document.getElementById('country-input').value = country;
+                toggleDropdown();
+            };
+            optionsContainer.appendChild(div);
+        });
+
+        function toggleDropdown() {
+            const wrapper = document.querySelector('.custom-select-wrapper');
+            const options = document.getElementById('options');
+            
+            wrapper.classList.toggle('active');
+            
+            options.style.display = options.style.display === 'block' ? 'none' : 'block';
+        }
+
+        window.addEventListener('click', function(e) {
+            const wrapper = document.querySelector('.custom-select-wrapper');
+            if (!wrapper.contains(e.target)) {
+                wrapper.classList.remove('active');
+                document.getElementById('options').style.display = 'none';
+            }
+        });
+
+
+        // info bar
+        document.querySelector('form').addEventListener('input', function() {
+            updateProgress();
+            checkPassword();
+        });
+
+
+        function updateProgress() {
+            const form = document.querySelector('form');
+            const inputs = form.querySelectorAll('input:not([type="hidden"]):not([type="submit"]):not(textarea)');
+            const progressFill = document.getElementById('main-progress-fill');
+            
+            let totalFields = 0;
+            let filledFields = 0;
+
+            inputs.forEach(input => {
+                if (input.type !== 'radio') {
+                    totalFields++;
+                    if (input.value.trim() !== '') filledFields++;
+                }
+            });
+
+            totalFields++; 
+            if (form.querySelector('input[name="skills"]:checked')) filledFields++;
+
+            totalFields++;
+            const country = document.getElementById('country-input').value;
+            if (country !== '') filledFields++;
+
+            const percent = Math.round((filledFields / totalFields) * 100);
+
+            document.getElementById('progress-percent').textContent = percent + '%';
+            progressFill.style.width = percent + '%';
+
+            if (percent === 100) {
+                progressFill.style.backgroundColor = '#00ff41';
+            } else {
+                progressFill.style.backgroundColor = '#00f2ff';
+            }
+        }
+
+        // check password and password errors
+        function checkPassword() {
+            const password = document.getElementById('password-input').value;
+            const submitBtn = document.getElementById('submit');
+            
+            const errorLength = document.getElementById('password-error'); 
+            const errorChars = document.getElementById('first_and_last-letter'); 
+
+            let isLengthValid = true;
+            let isCharsValid = true;
+
+            if (password.length > 0 && password.length < 8) {
+                errorLength.textContent = "Səhv: ən azı 8 simvol olmalıdır!";
+                errorLength.classList.add('visible');
+                isLengthValid = false;
+            } else {
+                errorLength.classList.remove('visible');
+            }
+
+
+            const restrictedChars = /[=+\/*.,?;\":@#$%^_&()-]/;
+            const forbiddenPattern = /[^a-zA-Z0-9_\-№!]/; 
+            
+            const firstChar = password.charAt(0);
+            const lastChar = password.charAt(password.length - 1);
+
+            if (password.length > 0) {
+                if (restrictedChars.test(firstChar) || restrictedChars.test(lastChar)) {
+                    errorChars.textContent = "Xəta: kənarlardakı simvollar icazə verilmir!";
+                    errorChars.classList.add('visible');
+                    isCharsValid = false;
+                } 
+                else if (forbiddenPattern.test(password)) {
+                    errorChars.textContent = "Xəta: ortasında qadağan olunmuş simvollar var!";
+                    errorChars.classList.add('visible');
+                    isCharsValid = false;
+                } 
+                else {
+                    errorChars.classList.remove('visible');
+                }
+            } else {
+                errorChars.classList.remove('visible');
+            }
+
+        
+            submitBtn.disabled = !(isLengthValid && isCharsValid && password.length >= 8);
+        }
+
+        // data register
+        document.querySelector('form').addEventListener('submit', function() {
+            const now = new Date();
+            
+            const timeString = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
+            document.getElementById('reg-time-field').value = timeString;
+        });
+    </script>
+</body>
+</html>

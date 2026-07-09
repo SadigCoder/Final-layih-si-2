@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Əsas | BioMap{% endblock %}
+
+{% block content %}
+<div class="panel welcome-panel fade-in">
+    <h2 class="neon-text">Qlobal Patogen Monitorinq Sistemi</h2>
+    <p>ÜST-nin mərkəzi analitika qovşağına xoş gəlmisiniz. Məlumat bazası Python nüvəsi daxilində yerli olaraq yerləşdirilib.</p>
+    
+    <div class="stats-grid" style="max-width: 900px; margin: 40px auto;">
+        <div class="stat-card">
+            <h3>{{ countries_count }}</h3>
+            <p style="margin: 5px 0 0 0; color: #64748b;">Nəzarət altındakı regionlar</p>
+        </div>
+        
+        <div class="stat-card">
+            <h3 id="core-status" style="color: var(--success); text-shadow: 0 0 10px var(--success);">ONLINE</h3>
+            <p style="margin: 5px 0 0 0; color: #64748b;">Məlumat bazası nüvəsi (Python)</p>
+        </div>
+
+        <div class="stat-card">
+            <h3>v2.6</h3>
+            <p style="margin: 5px 0 0 0; color: #64748b;">Məlumat şifrələmə protokolu</p>
+        </div>
+    </div>
+    <a href="/map" class="btn-submit" style="display: inline-block; text-decoration: none;">Regionların Bio-Xəritəsini aç</a>
+</div>
+  <script>
+        setInterval(function() {
+            fetch('/', { method: 'HEAD', cache: 'no-store' })
+            .then(response => {
+                const statusText = document.getElementById('core-status');
+                if (response.ok) {
+                    statusText.innerText = "ONLINE";
+                    statusText.style.color = "var(--success)";
+                    statusText.style.textShadow = "0 0 10px var(--success)";
+                } else {
+                    statusText.innerText = "OFFLINE";
+                    statusText.style.color = "var(--neon-red)";
+                    statusText.style.textShadow = "0 0 10px var(--neon-red)";
+                }
+            })
+            .catch(error => {
+                const statusText = document.getElementById('core-status');
+                statusText.innerText = "OFFLINE";
+                statusText.style.color = "var(--neon-red)";
+                statusText.style.textShadow = "0 0 10px var(--neon-red)";
+            });
+        }, 1500); 
+    </script>
+{% endblock %}

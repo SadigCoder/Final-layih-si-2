@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}BioMap Terminal{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+   <header class="main-header">
+        <div class="logo"><a href="/AZ" id="logo-a">☣️</a> BIOMAP <span>GLOBAL MONITORING</span></div>
+        <nav class="nav-menu">
+            <a href="/AZ" class="nav-item" onclick="playCyberClick()">Ana səhifə</a>  
+            <a href="/map" class="nav-item" onclick="playCyberClick()" style="display: inline-block;">Bio-Xəritə</a>
+            <a href="/simulator" class="nav-item" onclick="playCyberClick()">Sağqalma simulyatoru</a>
+            <a href="/game" class="nav-item" onclick="playCyberClick()">Oyun</a>
+            <a href="/about" class="nav-item" onclick="playCyberClick()">Layihə haqqında</a>
+    {% if user_name %}
+            <a href="/account" class="nav-item" onclick="playCyberClick()">Hesab ({{ user_name }})</a>
+    {% else %}
+            <a href="/" class="nav-item" onclick="playCyberClick()">Qeydiyyatdan keç</a>
+    {% endif %}
+        </nav>
+    </header>
+
+    <main class="main-content">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer class="main-footer">
+        <p>Bioloji müdafiə terminalı © 2026. Sistemlər normal işləyir.</p>
+    </footer>
+
+
+    <a class="error-button" id="error-box" onclick="toggleErrorReportBox()">!</a>
+
+     <div id="error-report-box">
+        <h3 style="color: #00d4ff;">Xəta haqqında hesabat göndərilməsi</h3>
+        <textarea id="error-report-text" placeholder="Problemi təsvir edin..." style="width: 100%; height: 100px; margin-top: 10px; padding: 10px; border-radius: 4px; border: none; margin-left: -8px; resize: none;"></textarea>
+        <div style="margin-top: 10px; text-align: right;">
+            <button onclick="submitErrorReport()" id="submit-error-report">Göndər</button>
+            <button onclick="closeErrorReportBox()" id="close-error-report">Bağla</button>
+        </div>
+
+     </div>
+
+ <script>
+    // Function to open the error report box.Send and close the error report box
+   
+    window.onclick = function(event) {
+        let box = document.getElementById("error-report-box");
+        let button = document.getElementById("error-box"); 
+        
+        if (box.style.display === "block" && !box.contains(event.target) && event.target !== button) {
+            
+            closeErrorReportBox();
+        };
+    };
+
+    function toggleErrorReportBox() {
+        let box = document.getElementById("error-report-box");
+       
+        if (window.getComputedStyle(box).display === "none") {
+            box.style.display = "block";
+        } else {
+            closeErrorReportBox();
+        }
+    };
+
+    function closeErrorReportBox() {
+        let errorReportBox = document.getElementById("error-report-box");
+        let reportText = document.getElementById("error-report-text");
+
+    
+        if (!errorReportBox) return;
+
+        if (reportText.value.trim() === "") {
+            errorReportBox.style.display = "none";
+        } else {
+            let user_answer = confirm("Əminsiniz? Hesabat mətni silinəcək.");
+
+            if (user_answer) {
+                errorReportBox.style.display = "none";
+                reportText.value = ""; 
+            }
+        };
+    };
+
+
+    function submitErrorReport() {
+        let reportText = document.getElementById("error-report-text");
+
+        if (reportText.value.trim() === "") {
+            alert("Lütfən, göndərməzdən əvvəl problemi təsvir edin.");
+            console.log("Səhv hesabatının göndərilməsi:", reportText);
+            return;
+        }
+        else {
+            window.location.href = "mailto:SadiqSiraliyev@proton.me?subject=Saytdan şikayət&body=" + encodeURIComponent(reportText.value);
+            console.log("Səhv hesabatının göndərilməsi:", reportText.value);
+            alert("Hesabatınız üçün təşəkkürlər! Tezliklə baxacağıq.");
+            reportText.value = ""; 
+            closeErrorReportBox();
+        }
+    }
+
+
+    // sound effect for button click
+    function playCyberClick() {
+            let ctx = new (window.AudioContext || window.webkitAudioContext)();
+            let osc = ctx.createOscillator(), gain = ctx.createGain();
+            
+            osc.type = 'triangle'; 
+            osc.frequency.setValueAtTime(900, ctx.currentTime); 
+            gain.gain.setValueAtTime(0.06, ctx.currentTime); 
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.05); 
+            
+            osc.connect(gain); 
+            gain.connect(ctx.destination);
+            osc.start(); 
+            osc.stop(ctx.currentTime + 0.06);
+    }
+ </script>
+</body>
+</html>
