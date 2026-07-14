@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block title %}Simulyator | BioMap{% endblock %}
+
+{% block content %}
+<div class="panel fade-in">
+    <h2 class="neon-text-blue">🎒 Səyahətin taktiki planlaşdırılması modulu</h2>
+    <p style="margin-bottom: 30px;">Təyinat nöqtəsini seçin və müdafiə vasitələrini hazırlayın. Sistem sağqalma şanslarını hesablayacaq.</p>
+
+    <form method="POST">
+        <div style="margin-bottom: 35px; position: relative;">
+            <label style="display: block; margin-bottom: 12px; font-weight: bold; color: #fff;">Eniş nöqtəsi:</label>
+            
+            <input type="hidden" name="country_id" id="countries_input" value="{{ current_id }}">
+
+            <div class="custom-select-wrapper" id="countries">
+                <div class="custom-select-trigger">
+                    <span>{{ countries[current_id].name }}</span>
+                    <div class="arrow"></div>
+                </div>
+                <div class="custom-options-box">
+                    {% for key, val in countries.items() %}
+                        <div class="custom-option {% if key == current_id %}selected{% endif %}" data-value="{{ key }}">
+                            {{ val.name }}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+    <div class="gear-grid">
+        {% for key, label in GEAR_LABELS.items() %}
+            <label class="checkbox-container">
+                <input type="radio" name="gear" value="{{ key }}" onclick="playCyberClick()" required> 
+                {{ label }}
+            </label>
+        {% endfor %}
+    </div>
+
+        <button type="submit" class="btn-submit" style="margin-top: 20px;">SAĞQALMA TESTİNİ BAŞLAT</button>
+    </form>
+
+    {% if sim_result %}
+        <div id="typewriter-box" class="result-box status-{{ sim_status }}" style="margin-top: 45px; padding: 20px; border-radius: 5px; color: #fff; font-family: monospace; min-height: 50px; line-height: 1.5;"></div>
+    {% endif %}
+</div>
+
+<script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const wrapper = document.getElementById("countries");
+            
+            if (wrapper) {
+                const trigger = wrapper.querySelector(".custom-select-trigger");
+                const triggerText = trigger.querySelector("span");
+                const hiddenInput = document.getElementById("countries_input");
+                const options = wrapper.querySelectorAll(".custom-option");
+
+                trigger.addEventListener("click", (e) => {
+                    e.stopPropagation();
+                    wrapper.classList.toggle("open");
+                });
+
+                let clickCounter = 0;
+
+                options.forEach(option => {
+                    option.addEventListener("click", function() {
+
+                        clickCounter++;
+                        
+                        options.forEach(opt => opt.classList.remove("selected"));
+            
+                        this.classList.add("selected");
+                        console.log(`Seçilmiş: ${this.innerText}[${clickCounter}]`);
+
+                        hiddenInput.value = this.getAttribute("data-value");
+            
+                        triggerText.innerText = this.innerText;        
+                        wrapper.classList.remove("open");
+                    });
+                });
+
+        
+                document.addEventListener("click", () => {
+                    wrapper.classList.remove("open");
+                });
+            }
+        });         
+           
+        const htmlText = `{{ sim_result | safe }}`;
+        const speed = 50;
+        let i = 0;
+        const container = document.getElementById("typewriter-box");
+
+        function typeWriter() {
+            if (i < htmlText.length) {
+                if (htmlText.charAt(i) === '<') {
+                    let tagEnd = htmlText.indexOf('>', i);
+                    if (tagEnd !== -1) {
+                        if (htmlText.substring(i, i + 5) === '<span') {
+                            let closeSpan = htmlText.indexOf('</span>', tagEnd);
+                            if (closeSpan !== -1) {
+                                tagEnd = closeSpan + 7;
+                            }
+                        }
+                        container.innerHTML = htmlText.substring(0, tagEnd);
+                        i = tagEnd;
+                    }
+                } else {
+                    container.innerHTML = htmlText.substring(0, i + 1);
+                    i++;
+                }
+                setTimeout(typeWriter, speed);
+            }
+        }
+        
+        document.addEventListener("DOMContentLoaded", function() {
+            container.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            typeWriter();
+        });
+</script>
+
+{% endblock %}
