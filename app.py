@@ -25,6 +25,47 @@ class User(db.Model):
 with app.app_context(): 
     db.create_all()
 
+GAME_DATA = {
+    "Braziliya": "🧪 Peyvənd",
+    "Konqo": "🛡️ Mühafizə kostyumu",
+    "Yaponiya": "💊 Antibiotiklər",
+    "Misir": "💊 Prazikvantel",
+    "Kanada": "🛡️ Mühafizə kostyumu",
+    "Avstraliya": "🥾 Qoruyucu çəkmələr",
+    "Rusiya": "🧪 Peyvənd",
+    "Hindistan": "🦟 Repellent",
+    "Madaqaskar": "😷 Respirator FFP3",
+    "ABŞ": "😷 Respirator FFP3",
+    "Özbəkistan": "🦟 Repellent",
+    "Avstriya": "😷 Respirator FFP3",
+    "Qrenlandiya": "🕸️ Pavlovski toru",
+    "Monqolustan": "🛡️ Mühafizə kostyumu",
+    "Sudan": "🦟 Repellent",
+    "Peru": "🦟 Repellent",
+    "Azərbaycan": "🧤 Cüt əlcək",
+    "İslandiya": "🧣 Termo-örtük",
+    "Efiopiya": "🔦 UV-sterilizator",
+    "Vyetnam": "🔬 Ekspress-test dəsti",
+    "Somali": "🧼 Antibakterial sabun",
+    "Antarktida": "📡 Fövqəladə radio-mayak"
+}
+
+GEAR_LABELS = {
+    "vaccine": "🧪 Peyvənd",
+    "suit": "🛡️ Mühafizə kostyumu",
+    "antibiotics": "💊 Antibiotiklər",
+    "praziquantel": "💊 Prazikvantel",
+    "boots": "🥾 Qoruyucu çəkmələr",
+    "repellent": "🦟 Repellent",
+    "respirator": "😷 Respirator FFP3",
+    "pavlovsky_net": "🕸️ Pavlovski toru",
+    "double_gloves": "🧤 Cüt əlcək",
+    "thermal_blanket": "🧣 Termo-örtük",
+    "uv_sterilizer": "🔦 UV-sterilizator",
+    "blood_test_kit": "🔬 Ekspress-test dəsti",
+    "antibacterial_soap": "🧼 Antibakterial sabun",
+    "radio_beacon": "📡 Fövqəladə radio-mayak"
+}
 
 COUNTRIES_DATA = {
     "brazil": {"name": "Braziliya (Amazoniya)", "population": "213 mln", "medicine": "İnkişaf etməkdə olan", "danger_level": "Yüksək", "diseases": [{"name": "Sarı qızdırma", "type": "Virus", "symptoms": "Qızdırma, sarılıq, əzələ ağrıları.", "info": "Ağcaqanadlar vasitəsilə keçən kəskin virus xəstəliyi. Peyvənd mütləqdir.", "fatality": "20-50%", "item_needed": "vaccine"}]},
@@ -51,31 +92,55 @@ COUNTRIES_DATA = {
     "antarctica": {"name": "Antarktida", "population": "1 min", "medicine": "Muxtar", "danger_level": "Orta", "diseases": [{"name": "Orientasiya itkisi", "type": "Fövqəladə hal", "symptoms": "Dezorientasiya, panika.", "info": "Qütb izolyasiyası səbəbindən psixoloji sarsıntı.", "fatality": "Yüksək", "item_needed": "radio_beacon"}]}
 }
 
-POPULATION_STATS = {
-    "brazil": {"1950": "53 млн", "1960": "72 млн", "1970": "94.5 млн", "1980": "121.1 млн", "1990": "149 млн", "2000": "170 млн", "2010": "191 млн", "2020": "213 млн", "2026": "213.6 млн"},
-    "congo": {"1950": "12 млн", "1960": "15 млн", "1970": "20 млн", "1980": "27 млн", "1990": "37 млн", "2000": "49 млн", "2010": "66 млн", "2020": "92 млн", "2026": "102 млн"},
-    "japan": {"1950": "83.6 млн", "1960": "93.3 млн", "1970": "104.3 млн", "1980": "116.8 млн", "1990": "123.5 млн", "2000": "126.8 млн", "2010": "128.1 млн", "2020": "126.3 млн", "2026": "123.6 млн"},
-    "egypt": {"1950": "21 млн", "1960": "27 млн", "1970": "35 млн", "1980": "45 млн", "1990": "59 млн", "2000": "69 млн", "2010": "84 млн", "2020": "104 млн", "2026": "114 млн"},
-    "canada": {"1950": "14 млн", "1960": "18 млн", "1970": "21 млн", "1980": "24 млн", "1990": "27 млн", "2000": "30 млн", "2010": "34 млн", "2020": "38 млн", "2026": "39 млн"},
-    "australia": {"1950": "8 млн", "1960": "10 млн", "1970": "12 млн", "1980": "14 млн", "1990": "17 млн", "2000": "19 млн", "2010": "22 млн", "2020": "25 млн", "2026": "26 млн"},
-    "russia": {"1950": "102 млн", "1960": "119 млн", "1970": "130 млн", "1980": "138 млн", "1990": "148 млн", "2000": "146 млн", "2010": "142 млн", "2020": "146 млн", "2026": "144 млн"},
-    "india": {"1950": "376 млн", "1960": "450 млн", "1970": "555 млн", "1980": "698 млн", "1990": "873 млн", "2000": "1.05 млрд", "2010": "1.23 млрд", "2020": "1.39 млрд", "2026": "1.43 млрд"},
-    "madagascar": {"1950": "4 млн", "1960": "5 млн", "1970": "7 млн", "1980": "9 млн", "1990": "12 млн", "2000": "16 млн", "2010": "22 млн", "2020": "28 млн", "2026": "30 млн"},
-    "usa": {"1950": "158 млн", "1960": "186 млн", "1970": "209 млн", "1980": "229 млн", "1990": "252 млн", "2000": "282 млн", "2010": "309 млн", "2020": "331 млн", "2026": "341 млн"},
-    "uzbekistan": {"1950": "6 млн", "1960": "8 млн", "1970": "11 млн", "1980": "15 млн", "1990": "20 млн", "2000": "24 млн", "2010": "28 млн", "2020": "34 млн", "2026": "36 млн"},
-    "austria": {"1950": "6.9 млн", "1960": "7.0 млн", "1970": "7.4 млн", "1980": "7.5 млн", "1990": "7.7 млн", "2000": "8.1 млн", "2010": "8.3 млн", "2020": "8.9 млн", "2026": "9.1 млн"},
-    "greenland": {"1950": "23 тыс.", "1960": "33 тыс.", "1970": "46 тыс.", "1980": "50 тыс.", "1990": "55 тыс.", "2000": "56 тыс.", "2010": "56 тыс.", "2020": "56 тыс.", "2026": "56 тыс."},
-    "mongolia": {"1950": "0.7 млн", "1960": "0.9 млн", "1970": "1.2 млн", "1980": "1.6 млн", "1990": "2.1 млн", "2000": "2.4 млн", "2010": "2.7 млн", "2020": "3.2 млн", "2026": "3.6 млн"},
-    "sudan": {"1950": "6 млн", "1960": "8 млн", "1970": "11 млн", "1980": "15 млн", "1990": "20 млн", "2000": "27 млн", "2010": "35 млн", "2020": "44 млн", "2026": "48 млн"},
-    "peru": {"1950": "7 млн", "1960": "10 млн", "1970": "13 млн", "1980": "17 млн", "1990": "22 млн", "2000": "26 млн", "2010": "29 млн", "2020": "33 млн", "2026": "34 млн"},
-    "azerbaijan": {"1950": "2.8 млн", "1960": "3.8 млн", "1970": "5.1 млн", "1980": "6.1 млн", "1990": "7.1 млн", "2000": "8.0 млн", "2010": "9.0 млн", "2020": "10.1 млн", "2026": "10.1 млн"},
-    "iceland": {"1950": "142 тыс.", "1960": "175 тыс.", "1970": "204 тыс.", "1980": "226 тыс.", "1990": "253 тыс.", "2000": "281 тыс.", "2010": "317 тыс.", "2020": "366 тыс.", "2026": "375 тыс."},
-    "ethiopia": {"1950": "18 млн", "1960": "22 млн", "1970": "29 млн", "1980": "37 млн", "1990": "48 млн", "2000": "66 млн", "2010": "89 млн", "2020": "115 млн", "2026": "120 млн"},
-    "vietnam": {"1950": "28 млн", "1960": "35 млн", "1970": "44 млн", "1980": "54 млн", "1990": "67 млн", "2000": "79 млн", "2010": "88 млн", "2020": "97 млн", "2026": "98 млн"},
-    "somalia": {"1950": "2 млн", "1960": "3 млн", "1970": "4 млн", "1980": "6 млн", "1990": "7 млн", "2000": "9 млн", "2010": "12 млн", "2020": "16 млн", "2026": "17 млн"},
-    "antarctica": {"1950": "0", "1960": "0", "1970": "0", "1980": "0", "1990": "0", "2000": "0.5 тыс.", "2010": "1 тыс.", "2020": "1.2 тыс.", "2026": "1.5 тыс."}
+HISTORICAL_NOTES = {
+    "brazil": {"1950-2026": "XXI əsrdə genişmiqyaslı urbanizasiya və demoqrafik doğum azalmasına keçid."},
+    "congo": {"1950-2026": "Son dərəcə mürəkkəb tibbi infrastruktur fonunda dünyada ən yüksək doğum səviyyələrindən biri."},
+    "japan": {"1950-2026": "Müharibədən sonrakı yüksəlişdən dərin demoqrafik böhrana və qocalmaya keçid."},
+    "egypt": {"1950-2026": "Yüksək doğum və Nil vadisi boyu sıxlıq səbəbindən sabit əhali artımı."},
+    "canada": {"1950-2026": "Əhalinin təbii qocalması fonunda aktiv immiqrasiya ilə dəstəklənən əhali artımı."},
+    "australia": {"1950-2026": "Nəhəng boş ərazilərə baxmayaraq, miqrasiya və sabit həyat səviyyəsi hesabına artım."},
+    "russia": {"1950-2026": "Tarixi sarsıntılar səbəbindən demoqrafik boşluqlar, miqrasiya prosesləri ilə kompensasiya edilir."},
+    "india": {"1950-2026": "Uşaq ölümünün sürətlə azalması hesabına dünyanın ən sıx məskunlaşan ölkəsinə çevrildi."},
+    "madagascar": {"1950-2026": "Təbii ehtiyatlar və kənd təsərrüfatı strukturu ilə məhdudlaşan yüksək doğum səviyyəsi."},
+    "usa": {"1950-2026": "Doğum və dünyanın hər yerindən kadr cəlb edilməsi sayəsində sabit əhali artımı."},
+    "uzbekistan": {"1950-2026": "Regionda ənənəvi olaraq yüksək doğum səviyyəsi ilə şərtlənən güclü demoqrafik sıçrayış."},
+    "austria": {"1950-2026": "Miqrantların Avropa iqtisadiyyatına inteqrasiyası hesabına sabit əhali."},
+    "greenland": {"1950-2026": "Sərt iqlim şəraiti səbəbindən son dərəcə aşağı əhali sıxlığı, say stabildir."},
+    "mongolia": {"1950-2026": "Köçəri həyat tərzindən urbanizasiyaya keçid fonunda orta əhali artımı."},
+    "sudan": {"1950-2026": "Daxili münaqişələr və məcburi miqrasiya ilə çətinləşən demoqrafik artım."},
+    "peru": {"1950-2026": "Onilliklər boyu davam edən yüksək doğumdan sonra orta əhali artımına keçid."},
+    "azerbaijan": {"1950-2026": "Həyat səviyyəsinin yüksəlməsi hesabına postsovet dövründə aktiv əhali artımı."},
+    "iceland": {"1950-2026": "Keyfiyyətli sosial təminat sayəsində kiçik, lakin dayanıqlı artım."},
+    "ethiopia": {"1950-2026": "Sənaye inkişafı tələb edən sürətlə artan gənc əhali."},
+    "vietnam": {"1950-2026": "Aqrar modeldən sənaye artımına uğurlu demoqrafik keçid."},
+    "somalia": {"1950-2026": "Kritik sosial-siyasi vəziyyətə baxmayaraq yüksək doğum səviyyəsi."},
+    "antarctica": {"1950-2026": "Daimi əhali yoxdur; say dəyişiklikləri yalnız elmi heyətin miqdarından asılıdır."}
 }
 
+POPULATION_STATS = {
+    "brazil": {"1950": "53 mln", "1960": "72 mln", "1970": "94.5 mln", "1980": "121.1 mln", "1990": "149 mln", "2000": "170 mln", "2010": "191 mln", "2020": "213 mln", "2026": "213.6 mln"},
+    "congo": {"1950": "12 mln", "1960": "15 mln", "1970": "20 mln", "1980": "27 mln", "1990": "37 mln", "2000": "49 mln", "2010": "66 mln", "2020": "92 mln", "2026": "102 mln"},
+    "japan": {"1950": "83.6 mln", "1960": "93.3 mln", "1970": "104.3 mln", "1980": "116.8 mln", "1990": "123.5 mln", "2000": "126.8 mln", "2010": "128.1 mln", "2020": "126.3 mln", "2026": "123.6 mln"},
+    "egypt": {"1950": "21 mln", "1960": "27 mln", "1970": "35 mln", "1980": "45 mln", "1990": "59 mln", "2000": "69 mln", "2010": "84 mln", "2020": "104 mln", "2026": "114 mln"},
+    "canada": {"1950": "14 mln", "1960": "18 mln", "1970": "21 mln", "1980": "24 mln", "1990": "27 mln", "2000": "30 mln", "2010": "34 mln", "2020": "38 mln", "2026": "39 mln"},
+    "australia": {"1950": "8 mln", "1960": "10 mln", "1970": "12 mln", "1980": "14 mln", "1990": "17 mln", "2000": "19 mln", "2010": "22 mln", "2020": "25 mln", "2026": "26 mln"},
+    "russia": {"1950": "102 mln", "1960": "119 mln", "1970": "130 mln", "1980": "138 mln", "1990": "148 mln", "2000": "146 mln", "2010": "142 mln", "2020": "146 mln", "2026": "144 mln"},
+    "india": {"1950": "376 mln", "1960": "450 mln", "1970": "555 mln", "1980": "698 mln", "1990": "873 mln", "2000": "1.05 mlrd", "2010": "1.23 mlrd", "2020": "1.39 mlrd", "2026": "1.43 mlrd"},
+    "madagascar": {"1950": "4 mln", "1960": "5 mln", "1970": "7 mln", "1980": "9 mln", "1990": "12 mln", "2000": "16 mln", "2010": "22 mln", "2020": "28 mln", "2026": "30 mln"},
+    "usa": {"1950": "158 mln", "1960": "186 mln", "1970": "209 mln", "1980": "229 mln", "1990": "252 mln", "2000": "282 mln", "2010": "309 mln", "2020": "331 mln", "2026": "341 mln"},
+    "uzbekistan": {"1950": "6 mln", "1960": "8 mln", "1970": "11 mln", "1980": "15 mln", "1990": "20 mln", "2000": "24 mln", "2010": "28 mln", "2020": "34 mln", "2026": "36 mln"},
+    "austria": {"1950": "6.9 mln", "1960": "7.0 mln", "1970": "7.4 mln", "1980": "7.5 mln", "1990": "7.7 mln", "2000": "8.1 mln", "2010": "8.3 mln", "2020": "8.9 mln", "2026": "9.1 mln"},
+    "greenland": {"1950": "23 min", "1960": "33 min", "1970": "46 min", "1980": "50 min", "1990": "55 min", "2000": "56 min", "2010": "56 min", "2020": "56 min", "2026": "56 min"},
+    "mongolia": {"1950": "0.7 mln", "1960": "0.9 mln", "1970": "1.2 mln", "1980": "1.6 mln", "1990": "2.1 mln", "2000": "2.4 mln", "2010": "2.7 mln", "2020": "3.2 mln", "2026": "3.6 mln"},
+    "sudan": {"1950": "6 mln", "1960": "8 mln", "1970": "11 mln", "1980": "15 mln", "1990": "20 mln", "2000": "27 mln", "2010": "35 mln", "2020": "44 mln", "2026": "48 mln"},
+    "peru": {"1950": "7 mln", "1960": "10 mln", "1970": "13 mln", "1980": "17 mln", "1990": "22 mln", "2000": "26 mln", "2010": "29 mln", "2020": "33 mln", "2026": "34 mln"},
+    "azerbaijan": {"1950": "2.8 mln", "1960": "3.8 mln", "1970": "5.1 mln", "1980": "6.1 mln", "1990": "7.1 mln", "2000": "8.0 mln", "2010": "9.0 mln", "2020": "10.1 mln", "2026": "10.1 mln"},
+    "iceland": {"1950": "142 min", "1960": "175 min", "1970": "204 min", "1980": "226 min", "1990": "253 min", "2000": "281 min", "2010": "317 min", "2020": "366 min", "2026": "375 min"},
+    "ethiopia": {"1950": "18 mln", "1960": "22 mln", "1970": "29 mln", "1980": "37 mln", "1990": "48 mln", "2000": "66 mln", "2010": "89 mln", "2020": "115 mln", "2026": "120 mln"},
+    "vietnam": {"1950": "28 mln", "1960": "35 mln", "1970": "44 mln", "1980": "54 mln", "1990": "67 mln", "2000": "79 mln", "2010": "88 mln", "2020": "97 mln", "2026": "98 mln"},
+    "somalia": {"1950": "2 mln", "1960": "3 mln", "1970": "4 mln", "1980": "6 mln", "1990": "7 mln", "2000": "9 mln", "2010": "12 mln", "2020": "16 mln", "2026": "17 mln"},
+    "antarctica": {"1950": "0", "1960": "0", "1970": "0", "1980": "0", "1990": "0", "2000": "0.5 min", "2010": "1 min", "2020": "1.2 min", "2026": "1.5 min"}
+}
 
 @app.route("/", methods=["GET", "POST"])
 def register():
@@ -149,6 +214,129 @@ def register():
 def index_az():
     return render_template("index.html", countries_count=len(COUNTRIES_DATA), user_name=session.get("user_name"))
 
+@app.route("/map", methods=["GET", "POST"])
+def map_page():
+    selected_id = request.form.get("country")
+    
+    if not selected_id:
+        selected_id = "brazil"
+    
+    country_info = COUNTRIES_DATA.get(selected_id)
+    stats = POPULATION_STATS[selected_id]
+    notes = HISTORICAL_NOTES.get(selected_id)
+
+    def parse_value(val_str):
+        s = str(val_str).lower().strip()
+        
+        clean_s = ""
+        for char in s:
+            if char.isdigit():
+                clean_s = clean_s + char
+            if char == '.':
+                clean_s = clean_s + char
+
+        if clean_s.endswith('.'):
+             clean_s = clean_s[:-1]       
+                
+        if clean_s == "":
+            return 0.0
+        
+        val = float(clean_s)
+        
+        if "млрд" in s:
+            return val * 1000000000
+        if "млн" in s:
+            return val * 1000000
+        if "тыс" in s:
+            return val * 1000
+            
+        return val
+
+
+
+    numeric_values = [parse_value(value_str) for value_str in stats.values()]
+   
+    max_val = 0
+    for v in numeric_values:
+        if v > max_val: max_val = v
+    if max_val == 0: max_val = 1.0
+
+    chart_data = []
+    for year, value_str in stats.items():
+        numeric_val = parse_value(value_str)
+        height = int((numeric_val / max_val) * 300)
+
+        if height < 10: 
+            height = 10   
+
+        
+        chart_data.append({
+            "year": year,
+            "value": value_str,
+            "height": height
+        })
+
+    return render_template("map.html", 
+                           chart_data=chart_data,
+                           countries=COUNTRIES_DATA, 
+                           selected_id=selected_id, 
+                           country=country_info, 
+                           POPULATION_STATS=POPULATION_STATS,
+                           GEAR_LABELS=GEAR_LABELS,
+                           stats=stats,
+                           notes=notes, 
+                           user_name=session.get("user_name")
+                           )
+
+@app.route("/simulator", methods=["GET", "POST"])
+def simulator_page():
+    if request.method == "POST":
+        current_id = request.form.get("country_id")
+        chosen_gear = request.form.get("gear")
+        country = COUNTRIES_DATA.get(current_id)
+        disease = country["diseases"][0]
+        needed = disease["item_needed"]
+        
+        if chosen_gear == needed:
+            session["sim_result"] = (
+                f"✅ UĞUR! <span class='disease-info'>{country['name']} ərazisində təhlükəsizsiniz.</span><br>"
+                f"<span class='disease-name'>{disease['name']}</span> xəstəliyindən qorundunuz!<br>"
+                f"Sizi <span class='real-gear-selection'>{GEAR_LABELS.get(needed)}</span> xilas etdi."
+            )
+            session["sim_status"] = "success"
+        else:
+            session["sim_result"] = ( 
+                f"☠️ YOLUXMA! <span class='country-name'>{country['name']}</span><br>"
+                f"Xəstəlik: <span class='disease-name'>{disease['name']}</span><br>"
+                f"Məlumat: <span class='disease-info'>{disease['info']}</span>"
+                f"<br>Seçiminiz: <span class='fake-gear-selection'>{GEAR_LABELS.get(chosen_gear)}</span>.<br>"
+                f"Tələb olunan: <span class='real-gear-selection'>{GEAR_LABELS.get(needed)}</span>."
+            )
+            session["sim_status"] = "danger"
+        
+        session["current_id"] = current_id
+        
+        return redirect(url_for('simulator_page'))
+
+    sim_result = session.get("sim_result")
+    sim_status = session.get("sim_status")
+    current_id = session.get("current_id", "brazil")
+
+    if "sim_result" in session:
+        del session["sim_result"]
+    if "sim_status" in session:
+        del session["sim_status"]
+    if "current_id" in session:
+        del session["current_id"]
+
+    return render_template("simulator.html", 
+                           countries=COUNTRIES_DATA, 
+                           sim_result=sim_result, 
+                           sim_status=sim_status, 
+                           current_id=current_id, 
+                           GEAR_LABELS=GEAR_LABELS,
+                           user_name=session.get("user_name")
+                           )
 
 if __name__ == "__main__":
     app.run(debug=True)
