@@ -4,6 +4,8 @@
 
 {% block content %}
 <div class="panel welcome-panel fade-in">
+    <div id="live-clock" style="margin-left: 1015px; margin-top: -18px; color: var(--neon-green); font-family: monospace; font-size: 14px; margin-bottom: 10px;"></div>
+
     <h2 class="neon-text">Qlobal Patogen Monitorinq Sistemi</h2>
     <p>ÜST-nin mərkəzi analitika qovşağına xoş gəlmisiniz. Məlumat bazası Python nüvəsi daxilində yerli olaraq yerləşdirilib.</p>
     
@@ -47,5 +49,14 @@
                 statusText.style.textShadow = "0 0 10px var(--neon-red)";
             });
         }, 1500); 
+
+
+        function updateClock() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('az-AZ'); 
+            document.getElementById('live-clock').innerText = "SİSTEM VAXTI: " + timeString;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
     </script>
 {% endblock %}
