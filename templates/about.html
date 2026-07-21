@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+
+{% block title %}Layihə haqqında | BioMap{% endblock %}
+
+{% block content %}
+<div class="panel about-panel fade-in">
+    <h2 class="neon-text-blue">🔬 Sistemin texniki formulyarı: BioMap v2.6</h2>
+    
+    <div style="margin-bottom: 30px;">
+        <p><strong>BioMap</strong> — qlobal epidemioloji vəziyyətin monitorinqi, sağqalma risklərinin modelləşdirilməsi və taktiki qərarların qəbul edilməsi üçün nəzərdə tutulmuş proqram-analitik kompleksdir.</p>
+        <p>Layihə mürəkkəb verilənlərin vizuallaşdırılması və istifadəçi təcrübəsinin (UX) optimallaşdırılması prinsipləri əsasında yaradılmışdır.</p>
+    </div>
+
+    <h3 class="neon-text">👤 Tərtibatçı məlumatları</h3>
+    <div style="background: #111; padding: 15px; border-left: 3.5px solid #00d4ff; margin-bottom: 20px;">
+        <p><strong>Müəllif:</strong> Sadıq Şirəliyev (SadigCoder)</p>
+        <p><strong>Yaş:</strong> 14</p>
+        <p><strong>Layihə statusu:</strong> Stabil (v2.6)</p>
+        <p><strong>İxtisaslaşma:</strong> Veb-tərtibat və proqramlaşdırma</p>
+        <div class="social-links" style="margin-top: 30px;">
+            <h3 style="color: var(--neon-blue);">Sosial şəbəkələr:</h3>
+            
+            <a href="https://github.com/SadigCoder" target="_blank" class="social-btn">
+                GitHub-a keçid
+            </a>
+        </div>
+    </div>
+
+    <h3 class="neon-text">⚙️ Texnoloji stek</h3>
+    <p>Sistem müasir və səmərəli proqramlaşdırma dilləri və çərçivələri üzərində qurulub:</p>
+    <ul style="line-height: 1.8; color: #ccc; margin-bottom: 20px;">
+        <li><strong>Backend:</strong> Python, Flask, SQLite.</li>
+        <li><strong>Frontend:</strong> HTML5, CSS3 (Flexbox, CSS Variables), JavaScript (ES6+).</li>
+        <li><strong>Logika:</strong> Dinamik marşrutlaşdırma və verilənlərin avtomatik təhlili.</li>
+    </ul>
+
+    <h3 class="neon-text">📋 Sistemin imkanları</h3>
+    <ul style="line-height: 1.8; color: #ccc;">
+        <li><strong>Dinamik Sağqalma Alqoritmləri:</strong> Müxtəlif ekoloji və epidemioloji parametrlər əsasında risklərin hesablanması.</li>
+        <li><strong>Taktiki Protokollaşdırma:</strong> 20-dən çox coğrafi zona üçün xüsusi təchizat və qorunma vasitələrinin seçilməsi.</li>
+        <li><strong>İnteraktiv Vizualizasiya:</strong> Əhali statistikası və tarixi təhlillərin qrafik təsviri.</li>
+        <li><strong>Lokallaşdırma:</strong> Azərbaycan dilində tam dəstəklənən interfeys və terminologiya bazası.</li>
+    </ul>
+    <div class="terminal-container" style="margin-top: 50px; padding: 20px; border: 1px solid var(--neon-blue); background: #050505;">
+        <div id="terminalHistory" style="margin-bottom: 15px; max-height: 200px; overflow-y: auto;">
+            <p style="color: #8b949e; font-family: monospace;">Sistemə qoşuldu. Əmrləri görmək üçün "help" yazın.</p>
+        </div>
+        <div class="input-line" style="display: flex; align-items: center; gap: 10px;">
+            <span style="color: var(--neon-green); font-family: monospace;">admin@biomap:~$</span>
+            <input type="text" id="commandInput"  
+                style="background: transparent; border: none; color: white; width: 100%; font-family: monospace; outline: none;">
+        </div>
+    </div>
+    <div style="margin-top: 40px; padding: 15px; border-top: 1px solid #333; font-family: monospace; font-size: 0.9em; color: #8b949e;">
+        <p>DEVELOPER_ID: SADIQ_SHIRALIYEV</p>
+        <p>BUILD_VERSION: 2.6_STABLE</p>
+        <p>PROJECT_START: 2026.06.20</p>
+        <p>LAST_UPDATE: 2026.07.20</p>
+        <p>STATUS: OPERATIONAL</p>
+    </div>
+</div>
+
+<script>
+    const input = document.getElementById('commandInput');
+    const history = document.getElementById('terminalHistory');
+
+    input.addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+            const command = input.value;
+            const val = command;
+
+            const userLine = document.createElement('p');
+            userLine.style.color = "white";
+            userLine.style.fontFamily = "monospace";
+            userLine.innerHTML = `<span style="color: var(--neon-green);">admin@biomap:~$</span> ${command}`;
+            history.appendChild(userLine);
+
+            const responseLine = document.createElement('p');
+            responseLine.style.fontFamily = "monospace";
+            responseLine.style.color = "var(--neon-yellow)";
+
+            if (val === 'admin') {
+                responseLine.innerText = "Sistem girişi uğurludur. Salam, SadigCoder!";
+            } else if (val === 'clear') {
+                history.innerHTML = "";
+            } else if (val === 'invert --ver1') {
+                document.body.style.filter = "invert(1)";
+                responseLine.innerText = "Sistem rəngləri dəyişdirildi (1).";
+            } else if (val === 'invert --ver2') {
+                document.body.style.filter = "grayscale(100%)";
+                responseLine.innerText = "Sistem rəngləri dəyişdirildi (2).";
+            } else if (val === 'invert --ver3') {
+                document.body.style.filter = "hue-rotate(90deg)";
+                responseLine.innerText = "Sistem rəngləri: Spektr dəyişdirildi (3).";
+            } else if (val === 'blur --sys') {
+                document.body.style.filter = "blur(1px)";
+                responseLine.innerText = "XƏBƏRDARLIQ: Sistem həddindən artıq yükləndi (Blur rejim).";
+            } else if (val === 'ping') {
+                responseLine.innerText = `PiNG! Əlaqə sürəti: ${Math.floor(Math.random() * 20 + 10)}ms`;
+            } else if (val === 'status --teacher') {
+                responseLine.innerText = "Sistem təhlili: Dərs və proqramlaşdırma təcrübəsi yüksək səviyyədədir. Təşəkkürlər, müəllim!";
+                responseLine.style.color = "var(--neon-green)";
+            } else if (val === 'zoom --in') {
+                document.body.style.transform = "scale(1.1)";
+                document.body.style.transition = "0.5s";
+                responseLine.innerText = "Sistem vizualizasiyası: Zoom aktivləşdirildi."; 
+            }else if (val === 'zoom -X4') {
+                document.body.style.transform = "scale(1.4)";
+                document.body.style.transition = "0.5s";
+                responseLine.innerText = "Sistem vizualizasiyası: Zoom aktivləşdirildi."; 
+            } else if (val === 'reset') {
+                document.body.style.transform = "scale(1)";
+                document.body.style.fontFamily = "'Courier New', Courier, monospace"
+                document.body.style.filter = "none";
+                responseLine.innerText = "Sistem rəngləri normallaşdırıldı.";
+            } else if (val === 'date') {
+                responseLine.innerText = new Date().toLocaleString();
+            } else if (val === 'biomap') {
+                responseLine.innerText = "Sistem versiyası 2.6. Bütün sektorlar stabil işləyir.";
+            } else if (val === 'help') {
+                responseLine.innerText = "Əmrlər: admin, biomap, clear, invert --ver1, reset, ping, zoom --in";
+            } else if (val === 'turqut') {
+                responseLine.style.color = "var(--neon-blue)";
+                responseLine.innerText = "Sistem təhlili: Layihənin əsas ilham mənbəyi - Müəllim Turqut. Sizin rəhbərliyinizlə bu layihə mükəmməl oldu!";
+            } else if (val === 'biomap --version') {
+                responseLine.innerText = "BioMap Engine v2.6 build 2026.07.20";
+            } else if (val === 'uptime') {
+                const seconds = Math.floor(performance.now() / 1000);
+                responseLine.innerText = `Sistem işləmə müddəti: ${seconds} saniyə.`;
+            } else if (val === 'scan') {
+                const progressLine = document.createElement('p');
+                progressLine.style.color = "var(--neon-blue)";
+                progressLine.style.fontFamily = "monospace";
+                history.appendChild(progressLine);
+                
+                const randomSpeed = Math.floor(Math.random() * 400) + 150;
+                
+                let progress = 0;
+                const interval = setInterval(() => {
+                    progress += 10;
+                    let bar = "[";
+                    for (let i = 0; i < 10; i++) {
+                        bar += (i < progress / 10) ? "█" : "-";
+                    }
+                    bar += "] " + progress + "%";
+                    
+                    progressLine.innerText = "Sektorlar skan edilir... " + bar;
+                    
+                    if (progress >= 100) {
+                        clearInterval(interval);
+                        progressLine.innerText += " - Tamamlandı!";
+                        history.scrollTop = history.scrollHeight;
+                    }
+                }, randomSpeed);
+            } else if (val === 'matrix') {
+                document.body.style.fontFamily = "'Times New Roman', Times, serif";
+                responseLine.innerText = "Sistem şrifti dəyişdirildi: Matrix Mode.";
+            } else if (val === 'best --Teacher') {
+                 responseLine.innerText = "Dünyanın ən yaxşı müəllimi Turgutdur müəllimdir. Dünyada onun kimi başqa müəllim yoxdur.";
+            } else {
+                responseLine.style.color = "var(--neon-red)";
+                responseLine.innerText = "Xəta: Naməlum əmr '" + command + "'";
+            }
+
+            history.appendChild(responseLine);
+            input.value = '';
+            history.scrollTop = history.scrollHeight; 
+        }
+    });
+</script>
+{% endblock %}

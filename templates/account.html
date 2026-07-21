@@ -1,0 +1,257 @@
+{% extends "base.html" %}
+
+{% block title %}Account | BioMap{% endblock %}
+
+{% block content %}
+<div class="panel fade-in" id="panel-user">
+    {% if error %}
+        <p class="msg-box" id="error" style="color: red;">{{ error }}</p>
+    {% endif %}
+
+    {% if message %}
+        <p class="msg-box" id="message" style="color: green;">{{ message }}</p>
+    {% endif %}
+    <div class="status-badge">
+        ACCESS LEVEL: <span class="neon-text-green">USER_{{ user.id }}</span>
+        <div class="online-indicator"></div>
+        <h1 class="neon-text-blue" id="neon-text-blue" style="font-size: 36px; margin-top: -15px; margin-left: -460px;">Hesab</h1>
+    </div>
+    <div id="info-about-user" class="info-about-user" style="margin-top: 40px;">
+        <div class="col-left">
+                <div class="data-item" id="name">
+                    <h4 class="neon-text-yellow">Ad:</h4>
+                    <div class="name-block name" id="same-things" title="{{ user.name }}"><strong>{{ user.name }}</strong></div>
+                </div>
+                <div class="data-item" id="surname">
+                    <h4 class="neon-text-yellow">Soyad:</h4>
+                    <div class="surname-block" id="same-things" title="{{ user.surname }}"><strong>{{ user.surname }}</strong></div>
+                </div>
+                <div class="data-item" id="age">
+                    <h4 class="neon-text-yellow">Yaş:</h4>
+                    <div class="age-block" id="same-things" title="{{ user.age }}"><strong>{{ user.age }}</strong></div>
+                </div>
+
+                <div class="data-item">
+                    <h4 class="neon-text-yellow">Ölkə:</h4>
+                    <div class="country-block" id="same-things" title="{{ user.country }}"><strong>{{ user.country }}</strong></div>
+                </div>
+        </div>
+        <div class="col-center">
+                <div class="data-item">
+                    <h4 class="neon-text-yellow">Qeydiyyat:</h4>
+                    <div class="regtime-block" id="same-things" title="{{ user.regtime }}"><strong>{{ user.regtime }}</strong></div>
+                </div>
+
+                <h4 class="neon-text-yellow" style="display: block; margin-top: 25px;">Məlumat:</h4>
+                <textarea id="info-about-user-block" cols="27" rows="10" readonly>{{ user.info }}</textarea>        
+        </div>
+
+        <div class="col-right">
+             <div class="data-item-block" id="countries-info">   
+                <p class="custom-details-block">Digər məlumatlar</p>
+                <div class="custom-arrow"></div>
+
+                <div class="info-block" id="custom-info-block">
+                       <h4 class="neon-text-yellow" style="padding-left: 10px; padding-top: 12px;">İxtisaslaşma:</h4>
+                       <div class="skill-block" id="same-things" title="{{ user.skill.capitalize() }}"><strong>{{ user.skill.capitalize() }}</strong></div>
+                       
+                       <div class="data-item">
+                            <h4 class="neon-text-yellow" style="padding-left: 10px;">Email:</h4>
+                            <div class="email-block" id="same-things" title="{{ user.email }}"><strong>{{ user.email }}</strong></div>
+                       </div> 
+
+                       <h4 class="neon-text-yellow" style="padding-left: 10px; padding-top: 10px;">Parol:</h4>
+                       <input type="password" id="secret-password" value="{{ user.password}}" readonly>
+                       <button class="view-on-password-btn" id="view-password"></button>
+
+                       <button class="change-password" id="btn-open-modal">Parolu dəyiş</button>
+
+                        <div id="password-modal" class="modal-overlay">
+                            <form class="modal-content" id="password-form" action="/account" method="POST">
+                                <h3 class="neon-text-yellow" style="margin-left: -10px;">Parolun dəyişdirilməsi</h3>
+                                
+                                <input type="password" id="modal-old" name="old_password" placeholder="Köhnə parol" required>
+                                <input type="password" id="modal-new" name="new_password" placeholder="Yeni parol" required>
+
+                                <input type="hidden" name="newPassword">
+                                
+                                <div class="modal-btns">
+                                    <button type="submit" id="btn-save">Yadda saxla</button>
+                                    <button type="button" id="btn-close">Ləğv et</button>
+                                </div>
+                            </form>
+                        </div>
+                </div>
+             </div>   
+        </div> 
+    </div>
+    <h3 style="color: var(--neon-blue); text-shadow: 2px 3px 10px var(--neon-blue);">Rejim üzrə statistikanız:</h3>
+
+    <div class="stats-grid-container">
+        <div class="mode-column">
+            <h4>Asan</h4>
+            {% for r in results if r.mode == 'Asan' %}
+                <div class="history-card">Xal: {{ r.score }}</div>
+            {% endfor %}
+        </div>
+
+        <div class="mode-column">
+            <h4>Orta</h4>
+            {% for r in results if r.mode == 'Orta' %}
+                <div class="history-card">Xal: {{ r.score }}</div>
+            {% endfor %}
+        </div>
+
+        <div class="mode-column">
+            <h4>Çətin</h4>
+            {% for r in results if r.mode == 'Çətin' %}
+                <div class="history-card">Xal: {{ r.score }}</div>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="system-monitor">
+        <div class="stats-grid">
+            <div class="stat-item">FPS: <span id="fps">256</span></div>
+            <div class="stat-item">PING: <span id="ping">12</span>ms</div>
+        </div>
+        <div class="system-monitor-extended">
+        <div class="bar-container">
+            <label>SYSTEM_CORE_LOAD:</label>
+            <div class="progress-bg"><div id="cpu-bar" class="progress-fill"></div></div>
+        </div>
+        <div class="bar-container">
+            <label>MEMORY_CACHE:</label>
+            <div class="progress-bg"><div id="mem-bar" class="progress-fill"></div></div>
+        </div>
+        <div class="dashboard-footer">
+            <div class="target-stats">
+                <div class="stat">TARGET: 0x88F</div>
+                <div class="stat">LOCK: <span class="blink">ACQUIRED</span></div>
+            </div>
+
+            <div class="radar-wrapper">
+                <div class="radar"></div>
+            </div>
+
+            <div class="coord-stats">
+                <div class="stat">LAT: 40.409N</div>
+                <div class="stat">LON: 49.867E</div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="system-footer-unified">
+    <div class="footer-segment">STATUS: <span class="status-ok">SYSTEM_OPERATIONAL</span></div>
+    
+    <div class="footer-segment">
+        <button class="btn-purge" onclick="showPurgeModal()">HESABI SİL</button>
+    </div>
+</div>
+
+<div id="purge-modal" class="modal-overlay">
+    <div class="modal-box">
+        <h2 class="modal-header">CRITICAL_SYSTEM_ALERT</h2>
+        <p class="modal-body">
+            DİQQƏT: Siz hesab məlumatlarının tamamilə silinməsi prosedurunu başlatmısınız. 
+            Bu hərəkət geri qaytarıla bilməz. Bütün əlaqəli metadata, sessiyalar 
+            və şəxsi parametrlər verilənlər bazasının təhlükəsiz seqmentindən birdəfəlik silinəcək. 
+            Bu əməliyyat tamamlandıqdan sonra sistem sizin girişinizi bərpa edə bilməyəcək.
+        </p>
+        <div class="modal-footer">
+            <button class="modal-btn cancel" onclick="hidePurgeModal()">LƏĞV ET</button>
+            <button class="modal-btn confirm" onclick="location.href='/delete-account'">SİLİNMƏYİ TƏSDİQLƏ</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const messages = document.querySelectorAll('.msg-box');
+    
+    if (messages.length > 0) {
+        setTimeout(() => {
+            messages.forEach(msg => {
+                msg.style.display = 'none'; 
+            });
+        }, 5000); 
+    }
+
+    const text = document.getElementById('countries-info');
+    const content = document.getElementById('custom-info-block');
+    const arrow = document.querySelector('.custom-arrow');
+
+    function toggleInfo() {
+        content.classList.toggle('show-info'); 
+        arrow.classList.toggle('active-arrow');
+    }
+
+    arrow.addEventListener('click', function(event) {
+        event.stopPropagation(); 
+        toggleInfo();
+    });
+
+    text.addEventListener('click', function(event) {
+        event.stopPropagation();
+        toggleInfo();
+    });
+
+    content.addEventListener('click', function(event) {
+        event.stopPropagation(); 
+    });
+
+    const passwordInput = document.getElementById('secret-password');
+    const viewBtn = document.getElementById('view-password');
+
+    const urlOpenEye = "https://cdn-icons-png.flaticon.com/512/709/709612.png";
+    const urlClosedEye = "https://cdn-icons-png.flaticon.com/512/565/565655.png";
+
+    viewBtn.addEventListener('click', function() {
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+
+            viewBtn.style.backgroundImage = `url('${urlClosedEye}')`; 
+        } else {
+            passwordInput.type = 'password';
+            viewBtn.style.backgroundImage = `url('${urlOpenEye}')`;
+        }
+    });
+
+    const modal = document.getElementById('password-modal');
+    const openBtn = document.getElementById('btn-open-modal');
+    const closeBtn = document.getElementById('btn-close');
+
+    document.getElementById('btn-open-modal').onclick = () => modal.style.display = 'flex';
+    document.getElementById('btn-close').onclick = () => modal.style.display = 'none';
+
+    window.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.style.display = 'none';
+        };    
+    });
+
+    document.getElementById('password-form').addEventListener('submit', function(e) {
+        const oldInput = document.querySelector('input[name="old_password"]').value;
+        const newPasswordInput = document.querySelector('input[name="new_password"]').value;
+        const hiddenInput = document.querySelector('input[name="newPassword"]');
+        
+        hiddenInput.value = newPasswordInput;
+    });
+
+    setInterval(() => {
+        document.getElementById('fps').innerText = Math.floor(Math.random() * 10 + 190);
+        document.getElementById('ping').innerText = Math.floor(Math.random() * 15 + 10);
+    }, 1000);
+
+    setInterval(() => {
+        document.getElementById('cpu-bar').style.width = Math.random() * 87 + 12 + '%';
+        document.getElementById('mem-bar').style.width = Math.random() * 65 + 32 + '%';
+    }, 1500);
+
+    function showPurgeModal() { 
+        document.getElementById('purge-modal').style.display = 'block'; 
+    }
+
+    function hidePurgeModal() { 
+        document.getElementById('purge-modal').style.display = 'none'; 
+    }
+</script>
+{% endblock %}

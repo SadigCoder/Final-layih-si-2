@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+
+{% block title %}Game | BIOMAP{% endblock %}
+
+{% block content %}
+<div id="start-screen" class="panel-start">
+        <h2>Çətinlik dərəcəsini seçin:</h2>
+        <div class="modes">
+           <label class="mode-card"><input type="radio" name="mode" value="60"> Asan: 60 san.</label>
+            <label class="mode-card"><input type="radio" name="mode" value="45"> Orta: 45 san.</label>
+            <label class="mode-card"><input type="radio" name="mode" value="25"> Çətin: 25 san.</label>
+        </div>
+
+        <button id="start-btn" type="button">OYUNA BAŞLA</button>
+</div>
+
+<div class="panel-game" id="game-display" style="display: none; height: 500px;">
+    <div id="timer" style="font-size: 20px; color: #6da2db; margin-bottom: 10px;">Vaxt: --</div>
+    <div id="score" style="font-size: 24px;">Xal: 0</div>
+    <h2 id="country-display">Ölkə: <span id="c-span"></span></h2>
+    <h3 id="disease-display" style="color: #a855f7;">Xəstəlik: <span id="d-span"></span></h3>
+    <div id="options-block">
+        <label><input type="radio" name="answer" value=""> <span></span></label>
+        <label><input type="radio" name="answer" value=""> <span></span></label>
+        <label><input type="radio" name="answer" value=""> <span></span></label>
+        <label><input type="radio" name="answer" value=""> <span></span></label>
+    </div>
+    <button id="check-btn">YOXLA</button>
+    <p id="result-text" style="font-weight: bold; margin-top: 20px; height: 20px;"></p>
+</div>
+
+<div id="game-over-screen" style="display:none;" class="panel-start">
+    <form action="/save_result" method="POST">
+        <h2 style="color: #ff4444;">VAXT BİTDİ!</h2>
+        <p>Rejim: <span id="final-mode"></span></p>
+        <p>Nəticən: <span id="final-score">0</span> xal</p>
+
+        <input type="hidden" name="score" id="score-input">
+        <input type="hidden" name="mode" id="mode-input">
+        <button class="exit-menu" type="submit">MENYUYA QAYIT</button>
+    </form>    
+</div>
+
+<script>
+    const gameData = {
+        "Braziliya (Amazoniya)": ["🧪 Peyvənd", "Sarı qızdırma"],
+        "Konqo Demokratik Respublikası": ["🛡️ Mühafizə kostyumu", "Yuxu xəstəliyi"],
+        "Yaponiya (Kənd regionları)": ["💊 Antibiotiklər", "Yapon ensefaliti"],
+        "Misir (Nil deltası)": ["💊 Prazikvantel", "Şistosomoz"],
+        "Kanada (Meşə massivləri)": ["🛡️ Mühafizə kostyumu", "Laym xəstəliyi"],
+        "Avstraliya (Şimal əraziləri)": ["🥾 Qoruyucu çəkmələr", "Melioidoz"],
+        "Rusiya (Sibir və Tayqa)": ["🧪 Peyvənd", "Gənə ensefaliti"],
+        "Hindistan": ["🦟 Repellent", "Dengi qızdırması"],
+        "Madaqaskar": ["😷 Respirator FFP3", "Ağciyər taunu"],
+        "ABŞ (Cənub-Qərb)": ["😷 Respirator FFP3", "Dərə qızdırması"],
+        "Özbəkistan": ["🦟 Repellent", "KCKQ"],
+        "Avstriya": ["😷 Respirator FFP3", "Ensefalit"],
+        "Qrenlandiya": ["🕸️ Pavlovski toru", "Gnus (həşəratlar)"],
+        "Monqolustan": ["🛡️ Mühafizə kostyumu", "Bubon taunu"],
+        "Sudan": ["🦟 Repellent", "Leyşmanioz"],
+        "Peru": ["🦟 Repellent", "Bartonelloz"],
+        "Azərbaycan": ["🧤 Cüt əlcək", "KCKQ"],
+        "İslandiya": ["🧣 Termo-örtük", "Hipotermiya"],
+        "Efiopiya": ["🔦 UV-sterilizator", "Amebiaz"],
+        "Vyetnam": ["🔬 Ekspress-test dəsti", "Hemorragik qızdırma"],
+        "Somali": ["🧼 Antibakterial sabun", "Dəri infeksiyaları"],
+        "Antarktida": ["📡 Fövqəladə radio-mayak", "Orientasiya itkisi"]
+    };
+
+    let score = 0, timerInterval, currentCorrectItem = "", selectedModeName = "";
+    const countryNames = Object.keys(gameData);
+
+    document.getElementById('start-btn').addEventListener('click', () => {
+        const selectedMode = document.querySelector('input[name="mode"]:checked');
+        
+        if (!selectedMode) {
+            alert("Zəhmət olmasa, çətinlik dərəcəsini seçin!");
+            return;
+        }
+
+        selectedModeName = selectedMode.parentElement.textContent.trim();
+        selectedModeName2 = selectedMode.parentElement.textContent.split(':')[0].trim();
+
+        const time = selectedMode.value;
+            
+        document.getElementById('start-screen').style.display = 'none';
+        document.getElementById('game-display').style.display = 'block';
+        startTimer(parseInt(time));
+        nextQuestion();
+    });
+
+    function nextQuestion() {
+        const randomCountry = countryNames[Math.floor(Math.random() * countryNames.length)];
+        const data = gameData[randomCountry];
+        currentCorrectItem = data[0];
+        document.getElementById('c-span').textContent = randomCountry;
+        document.getElementById('d-span').textContent = data[1];
+
+        let options = [currentCorrectItem];
+        while(options.length < 4) {
+            let rand = Object.values(gameData)[Math.floor(Math.random() * Object.values(gameData).length)][0];
+            if(!options.includes(rand)) options.push(rand);
+        }
+        options.sort(() => Math.random() - 0.5);
+
+        document.querySelectorAll('#options-block label').forEach((label, i) => {
+            label.querySelector('input').value = options[i];
+            label.querySelector('span').textContent = options[i];
+        });
+    }
+
+    document.getElementById('check-btn').addEventListener('click', function() {
+        const selected = document.querySelector('input[name="answer"]:checked');
+        const resultText = document.getElementById('result-text');
+        if (!selected) return alert("Variantı seçin!");
+
+        if (selected.value === currentCorrectItem) {
+            score++;
+            const scoreEl = document.getElementById('score');
+
+            scoreEl.innerText = "Xal: " + score;
+            scoreEl.classList.add('score-flash');
+
+            setTimeout(() => {
+                 scoreEl.classList.remove('score-flash')
+            }, 300);
+            resultText.innerText = "DOĞRUDUR!";
+
+            resultText.style.color = "#00ff00";
+            setTimeout(() => { 
+                resultText.innerText = ""; 
+                nextQuestion(); 
+            }, 1000);
+        } else {
+            resultText.innerText = "YALNIŞDIR!";
+            resultText.style.color = "#ff0000";
+            document.querySelector('.panel-game').classList.add('shake-effect');
+
+            setTimeout(() => {
+                 document.querySelector('.panel-game').classList.remove('shake-effect')
+            }, 300);
+
+            setTimeout(() => { 
+                resultText.innerText = "", nextQuestion(); 
+            }, 1000);
+        }
+    });
+
+    function startTimer(seconds) {
+        let timeLeft = seconds;
+        const timerDisplay = document.getElementById('timer');
+
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            timerDisplay.innerText = "Vaxt: " + timeLeft;
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                document.getElementById('game-display').style.display = 'none';
+                document.getElementById('game-over-screen').style.display = 'block';
+
+                document.getElementById('final-score').innerText = score;
+                document.getElementById('final-mode').innerText = selectedModeName;
+
+                document.getElementById('mode-input').value = selectedModeName2;
+                document.getElementById('score-input').value = score;
+            }
+        }, 1000);
+    }
+</script>
+{% endblock %}
