@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, session, url_for
 from flask_sqlalchemy import SQLAlchemy
+import random
 
 app = Flask(__name__)
 
@@ -21,6 +22,11 @@ class User(db.Model):
     skill = db.Column(db.String(50), nullable=False)
     password = db.Column(db.String(50), nullable=False)   
 
+class Result(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_name = db.Column(db.String(50))
+    score = db.Column(db.Integer)
+    mode = db.Column(db.String(50))
 
 with app.app_context(): 
     db.create_all()
@@ -47,7 +53,13 @@ GAME_DATA = {
     "Efiopiya": "🔦 UV-sterilizator",
     "Vyetnam": "🔬 Ekspress-test dəsti",
     "Somali": "🧼 Antibakterial sabun",
-    "Antarktida": "📡 Fövqəladə radio-mayak"
+    "Antarktida": "📡 Fövqəladə radio-mayak",
+    "Qazaxıstan": "🦟 Repellent",
+    "Türkiyə": "💊 Antibiotiklər",
+    "Almaniya": "😷 Respirator FFP3",
+    "Meksika": "🔬 Ekspress-test dəsti",
+    "Fransa": "🧪 Peyvənd",
+    "Cənubi Koreya": "💊 Antibiotiklər"
 }
 
 GEAR_LABELS = {
@@ -89,7 +101,13 @@ COUNTRIES_DATA = {
     "ethiopia": {"name": "Efiopiya", "population": "120 mln", "medicine": "Aşağı", "danger_level": "Orta", "diseases": [{"name": "Amebiaz", "type": "Parazitlər", "symptoms": "Bağırsaq ağrıları, ishal.", "info": "Çirkli su vasitəsilə keçən bağırsaq infeksiyası.", "fatality": "Aşağı", "item_needed": "uv_sterilizer"}]},
     "vietnam": {"name": "Vyetnam", "population": "98 mln", "medicine": "Orta", "danger_level": "Yüksək", "diseases": [{"name": "Hemorragik qızdırma", "type": "Virus", "symptoms": "Yüksək qızdırma, hematomlar.", "info": "Təcili diaqnostika və qan köçürülməsi tələb edir.", "fatality": "Yüksək", "item_needed": "blood_test_kit"}]},
     "somalia": {"name": "Somali", "population": "17 mln", "medicine": "Kritik", "danger_level": "Kritik", "diseases": [{"name": "Dəri infeksiyaları", "type": "Bakteriyalar", "symptoms": "İrinli yaralar, xoralar.", "info": "Antisanitariya şəraitində inkişaf edir. Antiseptik təmizlənmə lazımdır.", "fatality": "Aşağı", "item_needed": "antibacterial_soap"}]},
-    "antarctica": {"name": "Antarktida", "population": "1 min", "medicine": "Muxtar", "danger_level": "Orta", "diseases": [{"name": "Orientasiya itkisi", "type": "Fövqəladə hal", "symptoms": "Dezorientasiya, panika.", "info": "Qütb izolyasiyası səbəbindən psixoloji sarsıntı.", "fatality": "Yüksək", "item_needed": "radio_beacon"}]}
+    "antarctica": {"name": "Antarktida", "population": "1 min", "medicine": "Muxtar", "danger_level": "Orta", "diseases": [{"name": "Orientasiya itkisi", "type": "Fövqəladə hal", "symptoms": "Dezorientasiya, panika.", "info": "Qütb izolyasiyası səbəbindən psixoloji sarsıntı.", "fatality": "Yüksək", "item_needed": "radio_beacon"}]},
+    "Qazaxıstan": {"name": "Qazaxıstan (Bozqır zonaları)", "population": "20 mln", "medicine": "İnkişaf etməkdə olan", "danger_level": "Orta", "diseases": [{"name": "Vərəm", "type": "Bakteriya", "symptoms": "Xroniki öskürək, zəiflik.", "info": "Hava-damcı yolu ilə yayılan bakterial infeksiya.", "fatality": "15-30%", "item_needed": "repellent"}]},
+    "Türkiyə": {"name": "Türkiyə", "population": "85 mln", "medicine": "Yüksək", "danger_level": "Aşağı", "diseases": [{"name": "Krim-Konqo qızdırması", "type": "Virus", "symptoms": "Hərarət, qanaxma.", "info": "Kənd yerlərində gənə sancması ilə yoluxur.", "fatality": "10-20%", "item_needed": "antibiotics"}]},
+    "Almaniya": {"name": "Almaniya", "population": "84 mln", "medicine": "Qabaqcıl", "danger_level": "Aşağı", "diseases": [{"name": "Gənə ensefaliti", "type": "Virus", "symptoms": "Baş ağrısı, qızdırma.", "info": "Mərkəzi Avropa meşələrində gənələr vasitəsilə yayılır.", "fatality": "1-5%", "item_needed": "respirator"}]},
+    "Meksika": {"name": "Meksika", "population": "128 mln", "medicine": "İnkişaf etməkdə olan", "danger_level": "Yüksək", "diseases": [{"name": "Dengi qızdırması", "type": "Virus", "symptoms": "Sümük ağrıları, səpgi.", "info": "Tropik bölgələrdə ağcaqanad dişləməsi ilə ötürülür.", "fatality": "10-15%", "item_needed": "blood_test_kit"}]},
+    "Fransa": {"name": "Fransa", "population": "68 mln", "medicine": "Qabaqcıl", "danger_level": "Aşağı", "diseases": [{"name": "Grip (İnfluenza A)", "type": "Virus", "symptoms": "Yüksək hərarət, oynaq ağrıları.", "info": "Mövsümi epidemiya xarakterli virus infeksiyası.", "fatality": "1-3%", "item_needed": "vaccine"}]},
+    "Cənubi Koreya": {"name": "Cənubi Koreya", "population": "51 mln", "medicine": "Qabaqcıl", "danger_level": "Aşağı", "diseases": [{"name": "Hanta virus", "type": "Virus", "symptoms": "Böyrək çatışmazlığı, qızdırma.", "info": "Gəmiricilərin ifrazat məhsullarının tənəffüsü ilə yoluxur.", "fatality": "5-12%", "item_needed": "antibiotics"}]}
 }
 
 HISTORICAL_NOTES = {
@@ -114,7 +132,13 @@ HISTORICAL_NOTES = {
     "ethiopia": {"1950-2026": "Sənaye inkişafı tələb edən sürətlə artan gənc əhali."},
     "vietnam": {"1950-2026": "Aqrar modeldən sənaye artımına uğurlu demoqrafik keçid."},
     "somalia": {"1950-2026": "Kritik sosial-siyasi vəziyyətə baxmayaraq yüksək doğum səviyyəsi."},
-    "antarctica": {"1950-2026": "Daimi əhali yoxdur; say dəyişiklikləri yalnız elmi heyətin miqdarından asılıdır."}
+    "antarctica": {"1950-2026": "Daimi əhali yoxdur; say dəyişiklikləri yalnız elmi heyətin miqdarından asılıdır."},
+    "Qazaxıstan": {"1950-2026": "İstehsalatın genişlənməsi və köçürmələr nəticəsində tədricən urbanizasiya olunan əhali."},
+    "Türkiyə": {"1950-2026": "Güclü iqtisadi və səhiyyə islahatları fonunda dinamik şəhər artımı."},
+    "Almaniya": {"1950-2026": "Müharibədən sonrakı bərpa dövründən sabit və yaşlaşan əhali strukturuna keçid."},
+    "Meksika": {"1950-2026": "Sürətli əhali artımı dövründən sonra şəhərləşmə və doğum səviyyəsinin stabilləşməsi."},
+    "Fransa": {"1950-2026": "Avropa standartlarına uyğun olaraq səhiyyənin inkişafı və balanslı demoqrafik artım."},
+    "Cənubi Koreya": {"1950-2026": "İqtisadi möcüzə nəticəsində qısa müddətdə yüksək urbanizasiya və son dövr demoqrafik çağırışlar."}
 }
 
 POPULATION_STATS = {
@@ -139,10 +163,16 @@ POPULATION_STATS = {
     "ethiopia": {"1950": "18 mln", "1960": "22 mln", "1970": "29 mln", "1980": "37 mln", "1990": "48 mln", "2000": "66 mln", "2010": "89 mln", "2020": "115 mln", "2026": "120 mln"},
     "vietnam": {"1950": "28 mln", "1960": "35 mln", "1970": "44 mln", "1980": "54 mln", "1990": "67 mln", "2000": "79 mln", "2010": "88 mln", "2020": "97 mln", "2026": "98 mln"},
     "somalia": {"1950": "2 mln", "1960": "3 mln", "1970": "4 mln", "1980": "6 mln", "1990": "7 mln", "2000": "9 mln", "2010": "12 mln", "2020": "16 mln", "2026": "17 mln"},
-    "antarctica": {"1950": "0", "1960": "0", "1970": "0", "1980": "0", "1990": "0", "2000": "0.5 min", "2010": "1 min", "2020": "1.2 min", "2026": "1.5 min"}
+    "antarctica": {"1950": "0", "1960": "0", "1970": "0", "1980": "0", "1990": "0", "2000": "0.5 min", "2010": "1 min", "2020": "1.2 min", "2026": "1.5 min"},
+    "Qazaxıstan": {"1950": "6.7 mln", "1960": "10 mln", "1970": "13 mln", "1980": "14.9 mln", "1990": "16.5 mln", "2000": "15 mln", "2010": "16.2 mln", "2020": "18.7 mln", "2026": "20 mln"},
+    "Türkiyə": {"1950": "21.4 mln", "1960": "27.5 mln", "1970": "35.3 mln", "1980": "44.7 mln", "1990": "53.9 mln", "2000": "64.4 mln", "2010": "73.2 mln", "2020": "83.6 mln", "2026": "85 mln"},
+    "Almaniya": {"1950": "68.4 mln", "1960": "72.8 mln", "1970": "78.1 mln", "1980": "78.3 mln", "1990": "79.4 mln", "2000": "81.4 mln", "2010": "80.3 mln", "2020": "83.2 mln", "2026": "84 mln"},
+    "Meksika": {"1950": "28 mln", "1960": "38 mln", "1970": "52 mln", "1980": "68 mln", "1990": "84 mln", "2000": "98 mln", "2010": "114 mln", "2020": "126 mln", "2026": "128 mln"},
+    "Fransa": {"1950": "41.8 mln", "1960": "46.2 mln", "1970": "50.8 mln", "1980": "53.9 mln", "1990": "58.2 mln", "2000": "60.9 mln", "2010": "64.9 mln", "2020": "67.4 mln", "2026": "68 mln"},
+    "Cənubi Koreya": {"1950": "20 mln", "1960": "25 mln", "1970": "32 mln", "1980": "38 mln", "1990": "42.8 mln", "2000": "47 mln", "2010": "49.4 mln", "2020": "51.8 mln", "2026": "51 mln"}
 }
 
-@app.route("/", methods=["GET", "POST"])
+@app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
         name = request.form.get("name")
@@ -162,7 +192,7 @@ def register():
                 db.session.delete(u)
             db.session.commit()
             session.clear()
-            return redirect("/AZ")
+            return redirect("/register")
 
 
         all_users = db.session.query(User).all()
@@ -210,6 +240,7 @@ def register():
                            )
 
 
+@app.route("/")
 @app.route("/AZ")
 def index_az():
     return render_template("index.html", countries_count=len(COUNTRIES_DATA), user_name=session.get("user_name"))
@@ -218,63 +249,47 @@ def index_az():
 def map_page():
     selected_id = request.form.get("country")
     
-    if not selected_id:
-        selected_id = "brazil"
+    country_info = COUNTRIES_DATA.get(selected_id) if selected_id else None
+    stats = POPULATION_STATS.get(selected_id) if selected_id else None
+    notes = HISTORICAL_NOTES.get(selected_id) if selected_id else None
     
-    country_info = COUNTRIES_DATA.get(selected_id)
-    stats = POPULATION_STATS[selected_id]
-    notes = HISTORICAL_NOTES.get(selected_id)
-
-    def parse_value(val_str):
-        s = str(val_str).lower().strip()
-        
-        clean_s = ""
-        for char in s:
-            if char.isdigit():
-                clean_s = clean_s + char
-            if char == '.':
-                clean_s = clean_s + char
-
-        if clean_s.endswith('.'):
-             clean_s = clean_s[:-1]       
-                
-        if clean_s == "":
-            return 0.0
-        
-        val = float(clean_s)
-        
-        if "млрд" in s:
-            return val * 1000000000
-        if "млн" in s:
-            return val * 1000000
-        if "тыс" in s:
-            return val * 1000
-            
-        return val
-
-
-
-    numeric_values = [parse_value(value_str) for value_str in stats.values()]
-   
-    max_val = 0
-    for v in numeric_values:
-        if v > max_val: max_val = v
-    if max_val == 0: max_val = 1.0
-
     chart_data = []
-    for year, value_str in stats.items():
-        numeric_val = parse_value(value_str)
-        height = int((numeric_val / max_val) * 300)
+    if stats:
+        def parse_value(val_str):
+            s = str(val_str).lower().strip()
+            
+            clean_s = ""
+            for char in s:
+                if char.isdigit() or char == '.':
+                    clean_s = clean_s + char
+            
+            if clean_s == "": return 0.0
+            
+            val = float(clean_s)
+            if "mlrd" in s: return val * 1000000000
+            if "mln" in s: return val * 1000000
+            if "min" in s: return val * 1000
+            return val
 
-        if height < 10: 
-            height = 10   
-
+        numeric_values = [parse_value(v) for v in stats.values()]
         
-        chart_data.append({
-            "year": year,
-            "value": value_str,
-            "height": height
-        })
+        max_val = 0
+        for v in numeric_values:
+            if v > max_val: max_val = v
+        if max_val == 0: max_val = 1.0
+            
+        for year, value_str in stats.items():
+            numeric_val = parse_value(value_str)
+            height = int((numeric_val / max_val) * 300)
+            
+            if height < 10: 
+                height = 10 
+            
+            chart_data.append({
+                "year": year,
+                "value": value_str,
+                "height": height
+            })
 
     return render_template("map.html", 
                            chart_data=chart_data,
@@ -337,6 +352,117 @@ def simulator_page():
                            GEAR_LABELS=GEAR_LABELS,
                            user_name=session.get("user_name")
                            )
+
+@app.route("/account", methods=['GET', 'POST'])
+def account(): 
+    current_name = session.get("user_name")
+
+    if not current_name:
+        return redirect(url_for("register"))
+
+    all_users = db.session.query(User).all()
+    user = None
+    for u in all_users:
+        if u.name == current_name:
+            user = u
+            break
+
+    all_results = db.session.query(Result).all()
+    user_results = []
+    for r in all_results:
+        if r.user_name == current_name:
+            user_results.append(r)
+            
+    if request.method == "POST":
+        old_pass = request.form.get("old_password")
+        new_pass = request.form.get("new_password")
+        
+        if user.password == old_pass:
+            user.password = new_pass
+            db.session.commit()
+            return render_template("account.html", user=user, message="Şifrə uğurla yeniləndi!", user_name=session.get("user_name"))
+        else:
+            return render_template("account.html", user=user, error="Xəta: köhnə şifrə yanlışdır!", user_name=session.get("user_name"))
+    
+   
+                
+    return render_template("account.html", 
+                           user=user, 
+                           results=user_results, 
+                           user_name=session.get("user_name")
+    )
+
+@app.route('/delete-account')
+def delete_account():
+    name_in_session = session.get("user_name")
+    
+    if not name_in_session:
+        return redirect(url_for("account"))
+
+    all_users = db.session.query(User).all()
+    
+    for u in all_users:
+        if u.name == name_in_session:
+            db.session.delete(u)
+            db.session.commit()
+            break 
+            
+    session.clear()
+    return redirect(url_for('index_az'))
+
+
+
+@app.route('/game')
+def game():
+    if 'countries' not in session or not session['countries']:
+        session['countries'] = list(GAME_DATA.keys())
+
+    country = random.choice(session['countries'])
+    correct = GAME_DATA[country]
+    all_items = list(GAME_DATA.values())
+    
+    country_key = None
+    for key, data in COUNTRIES_DATA.items():
+        if country in data['name']:
+            country_key = key
+            break
+
+    options = [correct]
+    while len(options) < 4:
+        item = random.choice(all_items)
+        if item not in options:
+            options.append(item)
+
+    random.shuffle(options)   
+
+            
+    return render_template("game.html",
+                           all_countries=list(GAME_DATA.keys()), 
+                           game_data=GAME_DATA,
+                           country_key=country_key,
+                           correct=correct, 
+                           options=options, 
+                           user_name=session.get("user_name"),
+                           countries=COUNTRIES_DATA
+    )
+
+@app.route('/save_result', methods=['POST'])
+def save_result():
+    score = request.form.get('score')
+    mode = request.form.get('mode')
+    
+    new_result = Result(
+        user_name=session.get("user_name"),
+        score=score,
+        mode=mode
+    )
+    db.session.add(new_result)
+    db.session.commit()
+    return redirect(url_for('game'))
+
+@app.route("/about")
+def about_page():
+    return render_template("about.html", user_name=session.get("user_name"))
 
 if __name__ == "__main__":
     app.run(debug=True)
